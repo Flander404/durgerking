@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>DurgerKingBot</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="MobileOptimized" content="176" />
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="robots" content="noindex, nofollow" />
+    <script src="https://tg.dev/js/telegram-web-app.js"></script>
+    <script>
+        function setThemeClass() {
+            document.documentElement.className = Telegram.WebApp.colorScheme;
+        }
+        Telegram.WebApp.onEvent('themeChanged', setThemeClass);
+        setThemeClass();
+    </script>
+    <link href="./css/cafe.css" rel="stylesheet">
+</head>
+
+<body>
+    <section class="cafe-page cafe-items">
+    </section>
+    <section class="cafe-page cafe-order-overview">
+        <div class="cafe-block">
+            <div class="cafe-order-header-wrap">
+                <h2 class="cafe-order-header">Your Order</h2>
+                <span class="cafe-order-edit js-order-edit">Edit</span>
+            </div>
+            <div class="cafe-order-items">
+            </div>
+        </div>
+        <div class="cafe-text-field-wrap">
+            <textarea class="cafe-text-field js-order-comment-field cafe-block" rows="1"
+                placeholder="Add comment…"></textarea>
+            <textarea class="cafe-text-field js-order-comment-field cafe-block" rows="1"
+                placeholder="Add address…"></textarea>
+            <div class="cafe-text-field-hint">Any special requests, details, final wishes etc.
+            </div>
+        </div>
+    </section>
+    <div class="cafe-status-wrap">
+        <div class="cafe-status js-status">VIEW ORDER</div>
+    </div>
+    <script src="./js/mian.js"></script>
+    <script src="https://tg.dev/js/jquery.min.js"></script>
+    <script src="https://tg.dev/js/tgsticker.js"></script>
+    <script src="./js/cafe.js"></script>
+
+    <script>
+        
+
+        document.addEventListener('DOMContentLoaded', () => {
+            async function getDishes() {
+                try {
+                    const token = '73d2b9b6a303857b5854479692b05bd01defb73fb86fc5350689de1b637b764859b8993cb6b66870b3bac0c933d4d273a2e9d7a1c8ba0eabc0e03d083171c095c3da671d85336cff9e0abe44324489c7188b6c91e74d8043fabaecf6b4df2b0ceeee4e9ba19887b6372e1c4f8e2fe55c2058ffdedd022af452d2dd9db698853a'; // Замените на ваш API-токен
+                    const response = await axios.get('https://arbamarket.ru/api/v1/main/get_dishes/?cafe_id=2', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    const dishes = response.data.dishes;
+
+                    console.log('Dishes:', dishes); // Отладочный вывод
+
+                    const dishesList = document.querySelector('.cafe-page');
+
+                    dishesList.innerHTML = dishes.map(item => `
+                        <div class="cafe-item js-item" data-item-id="${item.id}" data-item-price="${item.price}">
+                            <div class="cafe-item-counter js-item-counter">0</div>
+                            <div class="cafe-item-photo">
+                                <picture class="cafe-item-lottie js-item-lottie">
+                                    <source type="application/x-tgsticker" srcset="./img/cafe/Fries.tgs">
+                                    <img src="https://arbamarket.ru${item.img}" style="background-image: url('https://arbamarket.ru${item.img}');">
+                                </picture>
+                            </div>
+                            <div class="cafe-item-label">
+                                <span class="cafe-item-title">${item.name}</span>
+                                <span class="cafe-item-price">${item.price}₽</span>
+                            </div>
+                            <div class="cafe-item-buttons">
+                                <button id="${item.id}_decr" onclick="decrBtn(${item.id})" class="cafe-item-decr-button js-item-decr-btn button-item ripple-handler">
+                                    <span class="ripple-mask">
+                                        <span class="ripple"></span>
+                                    </span>
+                                </button>
+                                <button id="${item.id}_incr" onclick="incrBtn(${item.id})" class="cafe-item-incr-button js-item-incr-btn button-item ripple-handler">
+                                    <span class="button-item-label">Add</span>
+                                    <span class="ripple-mask">
+                                        <span class="ripple"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                } catch (error) {
+                    console.error('Error fetching dishes:', error);
+                }
+            }
+
+            getDishes();
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        Cafe.init({
+            "apiUrl": "\/cafe\/api",
+            "mode": null,
+            "userId": Telegram.WebApp.initDataUnsafe.user.id,
+            "userHash": Telegram.WebApp.initDataUnsafe.hash
+        });
+            // Telegram.WebApp.initDataUnsafe.user.id
+            // Telegram.WebApp.initDataUnsafe.hash
+            // {ok: true, invoice_url: 'https://t.me/$heTDqLpH8EjrBwAAMp2AFZJbefM'}
+    </script>
+</body>
+
+</html>
